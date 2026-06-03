@@ -1,0 +1,732 @@
+/* ============================================================
+   Academia Prix Matriz — style.css
+   ============================================================ */
+
+/* ── Fontes e Reset ──────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --prix-orange: #FF6B00;
+  --prix-orange-dark: #CC5500;
+  --prix-dark: #111111;
+  --prix-darker: #0A0A0A;
+  --prix-card: #1A1A1A;
+  --prix-border: #2A2A2A;
+  --prix-text: #F0F0F0;
+  --prix-muted: #888888;
+  --prix-white: #FFFFFF;
+  --transition: .3s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--prix-darker);
+  color: var(--prix-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, .display-prix {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+}
+
+a { color: var(--prix-orange); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--prix-orange-dark); }
+
+img { max-width: 100%; height: auto; }
+
+/* ── Navbar ──────────────────────────────────────────────── */
+.navbar-prix {
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,107,0,0.15);
+  transition: background var(--transition), box-shadow var(--transition);
+  padding: 12px 0;
+}
+.navbar-prix.scrolled {
+  background: rgba(10,10,10,0.97);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+}
+.logo-prix {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: var(--prix-white);
+  letter-spacing: 2px;
+}
+.logo-prix span { color: var(--prix-orange); }
+.navbar-prix .nav-link {
+  color: var(--prix-text) !important;
+  font-weight: 500;
+  padding: 6px 14px !important;
+  border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+.navbar-prix .nav-link:hover,
+.navbar-prix .nav-link.active {
+  color: var(--prix-orange) !important;
+  background: rgba(255,107,0,0.1);
+}
+.navbar-toggler { border-color: var(--prix-orange); }
+.navbar-toggler-icon { filter: invert(1); }
+
+/* ── Botão Prix ──────────────────────────────────────────── */
+.btn-prix {
+  background: linear-gradient(135deg, var(--prix-orange), #FF8C00);
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  box-shadow: 0 4px 15px rgba(255,107,0,0.35);
+}
+.btn-prix:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 22px rgba(255,107,0,0.5);
+}
+.btn-outline-prix {
+  border: 2px solid var(--prix-orange);
+  color: var(--prix-orange) !important;
+  background: transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: all var(--transition);
+}
+.btn-outline-prix:hover {
+  background: var(--prix-orange);
+  color: #fff !important;
+}
+
+/* ── Seção genérica ──────────────────────────────────────── */
+.section-prix { padding: 80px 0; }
+.section-dark { background: var(--prix-dark); }
+.section-darker { background: var(--prix-darker); }
+
+.section-badge {
+  display: inline-block;
+  background: rgba(255,107,0,0.12);
+  color: var(--prix-orange);
+  border: 1px solid rgba(255,107,0,0.3);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--prix-white);
+  margin-bottom: 10px;
+}
+.section-title span { color: var(--prix-orange); }
+.section-sub {
+  color: var(--prix-muted);
+  font-size: 1rem;
+  max-width: 560px;
+}
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--prix-darker);
+}
+.hero-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .35;
+  z-index: 0;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.4) 100%);
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+.hero-tagline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  color: var(--prix-white);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.hero-tagline .highlight { color: var(--prix-orange); }
+.hero-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.7);
+  margin: 20px 0 32px;
+  max-width: 480px;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+.hero-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--prix-orange);
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: .8rem;
+  color: var(--prix-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ── Card Prix ───────────────────────────────────────────── */
+.card-prix {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 16px;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  overflow: hidden;
+}
+.card-prix:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,107,0,0.15);
+}
+
+/* ── Card de Plano ───────────────────────────────────────── */
+.plan-card {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 20px;
+  padding: 36px 28px;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.plan-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--prix-border);
+  transition: background var(--transition);
+}
+.plan-card:hover { transform: translateY(-8px); border-color: rgba(255,107,0,0.3); }
+.plan-card:hover::before { background: var(--prix-orange); }
+.plan-card.destaque {
+  border-color: var(--prix-orange);
+  box-shadow: 0 0 30px rgba(255,107,0,0.2);
+}
+.plan-card.destaque::before { background: linear-gradient(90deg, var(--prix-orange), #FF8C00); }
+.plan-badge-top {
+  position: absolute;
+  top: -1px; right: 20px;
+  background: var(--prix-orange);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 0 0 10px 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.plan-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--prix-white); }
+.plan-price { font-family: 'Bebas Neue', sans-serif; font-size: 3.2rem; color: var(--prix-orange); line-height: 1; }
+.plan-price-label { font-size: .85rem; color: var(--prix-muted); }
+.plan-per-month { font-size: .85rem; color: var(--prix-muted); margin-top: 4px; }
+.plan-card p { flex-grow: 1; }
+
+/* ── Card Professor ──────────────────────────────────────── */
+.prof-card {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 16px;
+  text-align: center;
+  padding: 32px 24px;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.prof-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+.prof-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--prix-orange);
+  margin-bottom: 16px;
+  margin-left: auto; margin-right: auto;
+}
+.prof-avatar-placeholder {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--prix-orange), #FF8C00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0 auto 16px;
+  border: 3px solid rgba(255,107,0,0.3);
+}
+.prof-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--prix-white); margin-bottom: 4px; }
+.prof-esp { color: var(--prix-orange); font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.prof-bio { color: var(--prix-muted); font-size: .88rem; margin: 12px 0; }
+.prof-instagram { color: var(--prix-muted); font-size: .85rem; }
+.prof-instagram i { color: var(--prix-orange); }
+
+/* ── Card Modalidade ─────────────────────────────────────── */
+.modal-card {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  transition: all var(--transition);
+}
+.modal-card:hover {
+  border-color: rgba(255,107,0,0.4);
+  transform: translateY(-4px);
+}
+.modal-icon {
+  font-size: 2.2rem;
+  color: var(--prix-orange);
+  margin-bottom: 12px;
+}
+.modal-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--prix-white); }
+.modal-desc { color: var(--prix-muted); font-size: .88rem; margin: 8px 0; }
+.modal-horario { font-size: .8rem; color: var(--prix-orange); font-weight: 500; }
+
+/* ── Vídeo Card ──────────────────────────────────────────── */
+.video-card {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+.video-card:hover { transform: translateY(-5px); border-color: rgba(255,107,0,0.4); }
+.video-card video { width: 100%; max-height: 280px; object-fit: cover; display: block; background: #000; }
+.video-card-body { padding: 16px; }
+.video-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--prix-white); }
+.video-card-desc { color: var(--prix-muted); font-size: .85rem; }
+
+/* ── Agendamento ─────────────────────────────────────────── */
+.agendamento-box {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  border-radius: 20px;
+  padding: 40px;
+}
+.form-prix label { color: var(--prix-text); font-weight: 500; margin-bottom: 6px; font-size: .9rem; }
+.form-prix .form-control,
+.form-prix .form-select {
+  background: var(--prix-darker);
+  border: 1px solid var(--prix-border);
+  color: var(--prix-text);
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: border-color var(--transition);
+}
+.form-prix .form-control:focus,
+.form-prix .form-select .focus {
+  border-color: var(--prix-orange);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.15);
+  background: var(--prix-darker);
+  color: var(--prix-text);
+}
+.form-prix .form-control::placeholder { color: var(--prix-muted); }
+.form-prix .form-select option { background: var(--prix-card); }
+
+/* ── Alert Prix ──────────────────────────────────────────── */
+.alert-prix-success {
+  background: rgba(25,135,84,0.15);
+  border: 1px solid rgba(25,135,84,0.4);
+  color: #75b798;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.alert-prix-error {
+  background: rgba(220,53,69,0.12);
+  border: 1px solid rgba(220,53,69,0.35);
+  color: #ea868f;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+/* ── Hero Agendamento ────────────────────────────────────── */
+.page-hero {
+  padding: 60px 0 40px;
+  background: linear-gradient(135deg, var(--prix-darker) 60%, rgba(255,107,0,0.04) 100%);
+  border-bottom: 1px solid var(--prix-border);
+}
+.page-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer-prix {
+  background: var(--prix-dark);
+  border-top: 1px solid var(--prix-border);
+  padding: 60px 0 30px;
+}
+.footer-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--prix-white);
+  margin-bottom: 12px;
+}
+.footer-desc { color: var(--prix-muted); font-size: .9rem; line-height: 1.7; }
+.footer-title { color: var(--prix-orange); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: .8rem; margin-bottom: 14px; }
+.footer-links { list-style: none; padding: 0; }
+.footer-links li { margin-bottom: 8px; }
+.footer-links a { color: var(--prix-muted); font-size: .9rem; transition: color var(--transition); }
+.footer-links a:hover { color: var(--prix-orange); }
+.footer-contact { list-style: none; padding: 0; }
+.footer-contact li { display: flex; gap: 10px; color: var(--prix-muted); font-size: .88rem; margin-bottom: 10px; align-items: flex-start; }
+.footer-contact i { color: var(--prix-orange); margin-top: 3px; flex-shrink: 0; }
+.social-icons { display: flex; gap: 10px; margin-top: 16px; }
+.social-btn {
+  width: 40px; height: 40px;
+  background: rgba(255,107,0,0.1);
+  border: 1px solid rgba(255,107,0,0.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--prix-orange) !important;
+  font-size: 1rem;
+  transition: all var(--transition);
+}
+.social-btn:hover { background: var(--prix-orange); color: #fff !important; transform: translateY(-2px); }
+.footer-divider { border-color: var(--prix-border); margin: 30px 0 20px; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.footer-bottom p { color: var(--prix-muted); font-size: .82rem; margin: 0; }
+
+/* ── Animações ───────────────────────────────────────────── */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+[data-animate].visible { opacity: 1; transform: translateY(0); }
+[data-animate]:nth-child(2) { transition-delay: .1s; }
+[data-animate]:nth-child(3) { transition-delay: .2s; }
+[data-animate]:nth-child(4) { transition-delay: .3s; }
+
+/* ── Filtro de professores ───────────────────────────────── */
+.filter-btn {
+  background: var(--prix-card);
+  border: 1px solid var(--prix-border);
+  color: var(--prix-muted);
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--prix-orange);
+  border-color: var(--prix-orange);
+  color: #fff;
+}
+
+/* ── Tabela de agendamentos ──────────────────────────────── */
+.table-prix {
+  color: var(--prix-text);
+  border-color: var(--prix-border);
+}
+.table-prix thead th {
+  background: var(--prix-card);
+  color: var(--prix-orange);
+  font-weight: 600;
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  border-color: var(--prix-border);
+}
+.table-prix tbody td { border-color: var(--prix-border); vertical-align: middle; font-size: .9rem; }
+.table-prix tbody tr:hover td { background: rgba(255,107,0,0.04); }
+
+/* ========== Formulários ========== */
+.form-step-title {
+    color: var(--prix-orange);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.form-step-number {
+    background: var(--prix-orange);
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    margin-right: 8px;
+}
+
+.prof-select-card {
+    background: var(--prix-darker);
+    border: 2px solid var(--prix-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 1rem;
+}
+
+.prof-select-card:hover,
+.prof-select-card.active {
+    border-color: var(--prix-orange);
+    background: rgba(255, 107, 0, 0.08);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+/* Tablet (até 991px) */
+@media (max-width: 991px) {
+  .plan-card { padding: 28px 20px; }
+  .agendamento-box { padding: 28px 20px; }
+}
+
+/* Mobile (até 767px) */
+@media (max-width: 767px) {
+  .section-prix { padding: 40px 0; }
+
+  .hero-section { min-height: 85vh; padding-top: 80px; }
+  .hero-video-bg { display: none; }
+  .hero-sub { font-size: .95rem; margin: 14px 0 22px; }
+  .hero-stats { gap: 16px; margin-top: 28px; }
+  .hero-stat-num { font-size: 2rem; }
+
+  .hero-content .d-flex.gap-3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px !important;
+  }
+  .hero-content .btn { width: 100%; text-align: center; }
+
+  .agendamento-box { padding: 20px 16px; }
+
+  .prof-select-card { padding: .6rem .4rem; }
+  .prof-avatar-placeholder[style*="width:60px"] {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.1rem !important;
+  }
+
+  #planos-home .col-lg-3 { width: 100%; }
+  .plan-card { padding: 24px 18px; }
+  .plan-price { font-size: 2.4rem; }
+
+  .table-responsive { -webkit-overflow-scrolling: touch; }
+  .table-prix tbody td,
+  .table-prix thead th { font-size: .78rem; padding: 8px 6px; white-space: nowrap; }
+
+  .card-prix.p-3 { padding: 12px 8px !important; }
+  .card-prix .bi { font-size: 1.2rem !important; }
+
+  .footer-prix { padding: 40px 0 20px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+
+  .col-md-6 { width: 100%; }
+
+  .navbar-prix { padding: 10px 0; }
+
+  .page-hero { padding: 40px 0 24px; }
+
+  .form-prix .form-control,
+  .form-prix .form-select { padding: 10px 12px; font-size: .9rem; }
+
+  .modal-card { padding: 20px 16px; }
+  .video-card video { max-height: 200px; }
+
+  .prof-card { padding: 24px 16px; }
+  .prof-avatar,
+  .prof-avatar-placeholder { width: 80px; height: 80px; font-size: 1.8rem; }
+
+  /* Filtros de categoria — centralizar e deixar quebrar limpo */
+  .filter-btn {
+    display: inline-block;
+    margin-bottom: 8px !important;
+  }
+  .text-center.mb-4,
+  .text-center.mb-5 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .text-center.mb-4 span,
+  .text-center.mb-5 span {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+}
+
+/* Mobile pequeno (até 400px) */
+@media (max-width: 400px) {
+  .section-title { font-size: 1.8rem; }
+  .hero-tagline { font-size: 2.6rem; }
+  .plan-price { font-size: 2rem; }
+  .col-6.col-md-3 { width: 50%; }
+}
+
+/* ========================================
+   CAROUSEL DE PROFESSORES - ESTILO
+   ======================================== */
+
+.carousel-profesores {
+    padding: 0 50px;
+}
+
+#carouselProfessores .carousel-item {
+    padding: 20px 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+#carouselProfessores .carousel-indicators {
+    bottom: -40px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+#carouselProfessores .carousel-control-prev,
+#carouselProfessores .carousel-control-next {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+#carouselProfessores .carousel-control-prev:hover,
+#carouselProfessores .carousel-control-next:hover {
+    opacity: 1;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .carousel-profesores {
+        padding: 0 30px;
+    }
+    
+    #carouselProfessores .carousel-control-prev {
+        left: -30px;
+    }
+    
+    #carouselProfessores .carousel-control-next {
+        right: -30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-profesores {
+        padding: 0 10px;
+    }
+    
+    #carouselProfessores .carousel-control-prev,
+    #carouselProfessores .carousel-control-next {
+        display: none;
+    }
+}
+
+/* ── Input de Data Personalizado ────────────────────────────── */
+input[type="date"] {
+  color-scheme: light;
+  background: #2a2a2a;
+  color: #e9e9e9;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* ── CORREÇÃO: carousel de professores — botões não saem da viewport ── */
+@media (min-width: 481px) and (max-width: 768px) {
+    .carousel-profesores {
+        padding: 0 40px;
+    }
+    #carouselProfessores .carousel-control-prev {
+        left: -40px;
+        width: 36px;
+        height: 36px;
+    }
+    #carouselProfessores .carousel-control-next {
+        right: -40px;
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* ── CORREÇÃO: input de edição de perfil estilo consistente ── */
+#inputNomeAluno,
+#inputEmailAluno,
+#inputTelefoneAluno {
+    background: var(--prix-darker);
+    border: 1px solid var(--prix-border);
+    color: var(--prix-text);
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: border-color var(--transition);
+}
+#inputNomeAluno:focus,
+#inputEmailAluno:focus,
+#inputTelefoneAluno:focus {
+    border-color: var(--prix-orange);
+    box-shadow: 0 0 0 3px rgba(255,107,0,0.15);
+    background: var(--prix-darker);
+    color: var(--prix-text);
+    outline: none;
+}
+
+/* ── Grid de vídeos (2x2) ────────────────────────────────────── */
+.videos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+}
+
+@media (max-width: 767px) {
+    .videos-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}

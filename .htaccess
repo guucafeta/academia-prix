@@ -1,0 +1,13 @@
+# ── Segurança: proibir listagem de diretórios ────────────────
+Options -Indexes
+
+# ── Negar acesso direto a arquivos sensíveis ─────────────────
+<FilesMatch "^\.env$|^\.gitignore$">
+    Require all denied
+</FilesMatch>
+
+# ── Proteção extra para a pasta de configuração ──────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^config/ - [F,L]
+</IfModule>

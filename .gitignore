@@ -1,0 +1,17 @@
+.env
+.env.local
+.env.*.local
+*.log
+logs/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+node_modules/
+package-lock.json
+/tmp/
+/temp/
