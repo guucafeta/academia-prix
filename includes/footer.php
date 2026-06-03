@@ -2,7 +2,7 @@
 
 <footer class="footer-prix" id="rodape">
     <div class="container">
-        <div class="row gy-4">
+        <div class="row gy-4 justify-content-between">
             <div class="col-lg-4 col-md-6">
                 <h5 class="footer-brand">🏋️ ACADEMIA PRIX</h5>
                 <p class="footer-desc">A academia mais completa de Campo Mourão. Estrutura moderna, professores qualificados e o ambiente certo para você conquistar seus objetivos.</p>
@@ -22,16 +22,7 @@
                     <li><a href="<?= BASE_URL ?>/contato.php">Contato</a></li>
                 </ul>
             </div>
-            <div class="col-lg-2 col-md-6 col-6">
-                <h6 class="footer-title">Modalidades</h6>
-                <ul class="footer-links">
-                    <li><a href="#">Musculação</a></li>
-                    <li><a href="#">CrossFit</a></li>
-                    <li><a href="#">Pilates</a></li>
-                    <li><a href="#">Spinning</a></li>
-                    <li><a href="#">Funcional</a></li>
-                </ul>
-            </div>
+            
             <div class="col-lg-4 col-md-6">
                 <h6 class="footer-title">Academia Prix — Unidade Matriz</h6>
                 <ul class="footer-contact">

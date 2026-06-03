@@ -34,6 +34,7 @@ if (!empty($_SESSION['mensagem'])) {
 }
 
 $plano_atual = getPlanoAluno($aluno_id);
+$todos_planos = getPlanos();
 
 // CSRF token para cancelamento de agendamento
 if (empty($_SESSION['csrf_token'])) {
@@ -85,12 +86,15 @@ const BASE_URL_JS = <?= json_encode(rtrim(BASE_URL, '/')) ?>;
                     <i class="bi bi-credit-card" style="font-size:2.5rem;color:#0dcaf0;"></i>
                     <h5 class="mt-3" style="color:var(--prix-white);">Meu Plano</h5>
                     <?php if ($plano_atual): ?>
-                        <p style="color:var(--prix-muted);font-size:.9rem;margin:0;"><?= sanitizar($plano_atual['nome']) ?></p>
-                        <p style="color:var(--prix-orange);font-size:1.2rem;font-weight:600;"><?= formatarPreco($plano_atual['preco']) ?></p>
+                        <p id="planoAtualNome" style="color:var(--prix-muted);font-size:.9rem;margin:0;"><?= sanitizar($plano_atual['nome']) ?></p>
+                        <p id="planoAtualPreco" style="color:var(--prix-orange);font-size:1.2rem;font-weight:600;"><?= formatarPreco($plano_atual['preco']) ?></p>
                     <?php else: ?>
-                        <p style="color:var(--prix-muted);font-size:.9rem;">Nenhum plano ativo</p>
-                        <a href="<?= BASE_URL ?>/planos.php" class="btn btn-prix btn-sm mt-2">Ver Planos</a>
+                        <p id="planoAtualNome" style="color:var(--prix-muted);font-size:.9rem;">Nenhum plano ativo</p>
+                        <p id="planoAtualPreco" style="display:none;"></p>
                     <?php endif; ?>
+                    <button class="btn btn-outline-prix btn-sm mt-2" id="btnAbrirModalPlanos" data-bs-toggle="modal" data-bs-target="#modalTrocarPlano">
+                        <i class="bi bi-arrow-left-right me-1"></i>Trocar Plano
+                    </button>
                 </div>
             </div>
             <div class="col-md-4">
@@ -227,9 +231,6 @@ const BASE_URL_JS = <?= json_encode(rtrim(BASE_URL, '/')) ?>;
                         <a href="<?= BASE_URL ?>/index.php#agendamento" class="btn btn-prix w-100 mb-3" id="btnAgendarProfessor">
                             <i class="bi bi-calendar-plus me-2"></i>Agendar com Professor
                         </a>
-                        <a href="<?= BASE_URL ?>/planos.php" class="btn btn-outline-prix w-100 mb-3" id="btnVerPlanos">
-                            <i class="bi bi-credit-card me-2"></i>Ver Planos Disponíveis
-                        </a>
                         <a href="<?= BASE_URL ?>/treinos.php" class="btn btn-outline-prix w-100 mb-3" id="btnMeusTreinos">
                             <i class="bi bi-play-circle me-2"></i>Meus Treinos
                         </a>
@@ -247,5 +248,102 @@ const BASE_URL_JS = <?= json_encode(rtrim(BASE_URL, '/')) ?>;
 
 <script src="<?= URL_ASSETS ?>/js/verificar_agendamentos.js"></script>
 <script src="<?= URL_ASSETS ?>/js/perfil_aluno.js"></script>
+
+<!-- Modal Trocar Plano -->
+<div class="modal fade" id="modalTrocarPlano" tabindex="-1" aria-labelledby="modalTrocarPlanoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background:var(--prix-card);border:1px solid var(--prix-border);">
+            <div class="modal-header" style="border-bottom:1px solid var(--prix-border);">
+                <h5 class="modal-title" id="modalTrocarPlanoLabel" style="color:var(--prix-white);font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;">
+                    <i class="bi bi-credit-card me-2" style="color:var(--prix-orange);"></i>ESCOLHER PLANO
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4">
+
+                <div id="msgTrocarPlano" class="mb-3"></div>
+
+                <?php if (!empty($plano_atual)): ?>
+                <div class="alert" style="background:rgba(255,107,0,.1);border:1px solid var(--prix-orange);border-radius:10px;color:var(--prix-muted);font-size:.9rem;margin-bottom:1.5rem;">
+                    <i class="bi bi-info-circle me-2" style="color:var(--prix-orange);"></i>
+                    Plano atual: <strong style="color:var(--prix-white);"><?= sanitizar($plano_atual['nome']) ?></strong>
+                    — <?= formatarPreco($plano_atual['preco']) ?>
+                </div>
+                <?php endif; ?>
+
+                <div class="row g-3 justify-content-center" id="gridPlanosModal">
+                    <?php foreach ($todos_planos as $p):
+                        $meses    = (int)$p['duracao_meses'];
+                        $atual_id = $plano_atual ? (int)$plano_atual['id'] : 0;
+                        $is_atual = ($atual_id === (int)$p['id']);
+                        $destaque = (bool)$p['destaque'];
+                    ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="plan-card h-100 <?= $destaque ? 'destaque' : '' ?>" style="position:relative;">
+                            <?php if ($destaque): ?>
+                                <div class="plan-badge-top"><i class="bi bi-star-fill me-1"></i>Mais Popular</div>
+                            <?php endif; ?>
+                            <?php if ($is_atual): ?>
+                                <div style="position:absolute;top:<?= $destaque ? '44px' : '12px' ?>;right:12px;background:#198754;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;">
+                                    <i class="bi bi-check-circle me-1"></i>Atual
+                                </div>
+                            <?php endif; ?>
+                            <div class="plan-name"><?= sanitizar($p['nome']) ?></div>
+                            <div class="mt-3 mb-1">
+                                <span class="plan-price"><?= formatarPreco((float)$p['preco']) ?></span>
+                            </div>
+                            <div class="plan-price-label">
+                                <?php if ($meses === 0): ?>por sessão avulsa
+                                <?php else: ?>por <?= $meses ?> <?= $meses == 1 ? 'mês' : 'meses' ?><?php endif; ?>
+                            </div>
+                            <?php if ($meses > 1): ?>
+                            <div class="plan-per-month">
+                                <i class="bi bi-tag me-1"></i>Equivale a <?= formatarPreco(precoPorMes($p)) ?>/mês
+                            </div>
+                            <?php endif; ?>
+                            <hr style="border-color:var(--prix-border);margin:16px 0;">
+                            <p style="color:var(--prix-muted);font-size:.88rem;margin-bottom:12px;"><?= sanitizar($p['descricao']) ?></p>
+                            <ul style="color:var(--prix-muted);font-size:.83rem;list-style:none;padding:0;margin:0 0 16px;">
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Acesso a todas as modalidades</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Vestiários completos</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Avaliação física gratuita</li>
+                                <?php if ($meses >= 3): ?>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Orientação nutricional</li>
+                                <?php endif; ?>
+                                <?php if ($meses >= 6): ?>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>1 sessão personal grátis/mês</li>
+                                <?php endif; ?>
+                            </ul>
+                            <?php if ($is_atual): ?>
+                                <button class="btn btn-outline-secondary w-100 mt-auto" disabled>
+                                    <i class="bi bi-check2 me-1"></i>Plano Ativo
+                                </button>
+                            <?php else: ?>
+                                <button class="btn <?= $destaque ? 'btn-prix' : 'btn-outline-prix' ?> w-100 mt-auto btn-selecionar-plano"
+                                        data-plano-id="<?= (int)$p['id'] ?>"
+                                        data-plano-nome="<?= sanitizar($p['nome']) ?>"
+                                        data-plano-preco="<?= sanitizar(formatarPreco((float)$p['preco'])) ?>">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Quero Este Plano
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="border-top:1px solid var(--prix-border);">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dados para o JS -->
+<script>
+const CSRF_TOKEN_PLANO = <?= json_encode($_SESSION['csrf_token']) ?>;
+const PLANO_ATUAL_ID   = <?= json_encode($plano_atual ? (int)$plano_atual['id'] : null) ?>;
+</script>
+<script src="<?= URL_ASSETS ?>/js/trocar_plano.js"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

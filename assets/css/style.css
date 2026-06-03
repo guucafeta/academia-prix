@@ -730,3 +730,16 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
         gap: 16px;
     }
 }
+
+/* Igualar altura dos cards do painel do aluno (Perfil, Plano, Agendamentos) */
+.card-prix {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Garantir que os ícones fiquem bem distribuídos */
+.card-prix i {
+    margin-bottom: 8px;
+}
