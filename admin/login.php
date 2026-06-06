@@ -51,7 +51,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
                         <button type="submit" name="login" class="btn btn-prix w-100">Entrar</button>
                     </form>
-                    <p class="mt-4" style="color:var(--prix-muted);font-size:.9rem;">Use a senha definida em <code>.env</code> na variável <strong>ADMIN_PASSWORD</strong>.</p>
+                   
                 </div>
             </div>
         </div>

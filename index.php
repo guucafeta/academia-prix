@@ -145,22 +145,87 @@ require_once __DIR__ . '/includes/header.php';
                             <span class="form-step-number">2</span>
                             SELECIONE DATA E HORÁRIO
                         </h5>
+                        <?php
+                        // Injeta os horários por dia para o JS
+                        $horariosPorDia = HORARIOS_POR_DIA;
+                        ?>
+                        <script>
+                        const HORARIOS_POR_DIA = <?= json_encode($horariosPorDia, JSON_UNESCAPED_UNICODE) ?>;
+                        const HORA_POSTBACK    = <?= json_encode($_POST['hora'] ?? '') ?>;
+                        const DATA_POSTBACK    = <?= json_encode($_POST['data'] ?? '') ?>;
+
+                        // Labels informativos de funcionamento por dia da semana
+                        const LABEL_FUNCIONAMENTO = {
+                            0: 'Domingo: 09h00 às 11h00',
+                            1: 'Segunda: 05h30 às 00h00',
+                            2: 'Terça: 05h30 às 00h00',
+                            3: 'Quarta: 05h30 às 00h00',
+                            4: 'Quinta: 05h30 às 00h00',
+                            5: 'Sexta: 05h30 às 23h00',
+                            6: 'Sábado: 09h00–12h00 e 14h00–18h00',
+                        };
+
+                        function atualizarHorarios() {
+                            const dataInput = document.getElementById('data');
+                            const horaSelect = document.getElementById('hora');
+                            const infoHorario = document.getElementById('infoHorarioFuncionamento');
+                            const val = dataInput.value; // 'YYYY-MM-DD'
+
+                            if (!val) {
+                                horaSelect.innerHTML = '<option value="">Selecione uma data primeiro...</option>';
+                                horaSelect.disabled = true;
+                                if (infoHorario) infoHorario.textContent = '';
+                                return;
+                            }
+
+                            // dayOfWeek: 0=Dom ... 6=Sáb (sem timezone offset)
+                            const [y, m, d] = val.split('-').map(Number);
+                            const dow = new Date(y, m - 1, d).getDay();
+                            const horarios = HORARIOS_POR_DIA[dow] || [];
+
+                            horaSelect.disabled = false;
+                            horaSelect.innerHTML = '<option value="">Selecione...</option>';
+                            horarios.forEach(h => {
+                                const opt = document.createElement('option');
+                                opt.value = h;
+                                opt.textContent = h;
+                                if (h === HORA_POSTBACK) opt.selected = true;
+                                horaSelect.appendChild(opt);
+                            });
+
+                            if (infoHorario) {
+                                infoHorario.textContent = '🕐 ' + (LABEL_FUNCIONAMENTO[dow] || '');
+                            }
+                        }
+
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const dataInput = document.getElementById('data');
+                            if (dataInput) {
+                                dataInput.addEventListener('change', atualizarHorarios);
+                                // Se há postback, popula imediatamente
+                                if (DATA_POSTBACK) atualizarHorarios();
+                                else {
+                                    // Estado inicial: select desabilitado
+                                    const horaSelect = document.getElementById('hora');
+                                    if (horaSelect) {
+                                        horaSelect.innerHTML = '<option value="">Selecione uma data primeiro...</option>';
+                                        horaSelect.disabled = true;
+                                    }
+                                }
+                            }
+                        });
+                        </script>
+
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label for="data" class="form-label">Data</label>
                                 <input type="date" name="data" id="data" class="form-control" min="<?= date('Y-m-d') ?>" value="<?= sanitizar($_POST['data'] ?? '') ?>">
+                                <div id="infoHorarioFuncionamento" style="font-size:.8rem;color:var(--prix-orange);margin-top:5px;min-height:1.2em;"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="hora" class="form-label">Horário</label>
-                                <select name="hora" id="hora" class="form-select">
-                                    <option value="">Selecione...</option>
-                                    <?php
-                                    $horarios = HORARIOS_FUNCIONAMENTO;
-                                    foreach ($horarios as $h):
-                                        $sel = (isset($_POST['hora']) && $_POST['hora'] === $h) ? 'selected' : '';
-                                    ?>
-                                    <option value="<?= $h ?>" <?= $sel ?>><?= $h ?></option>
-                                    <?php endforeach; ?>
+                                <select name="hora" id="hora" class="form-select" disabled>
+                                    <option value="">Selecione uma data primeiro...</option>
                                 </select>
                             </div>
                             <div class="col-12">

@@ -217,15 +217,16 @@ function validarAgendamento(array $dados): array {
     if (empty($dados['hora'])) {
         $erros[] = 'O horário é obrigatório.';
     } else {
-        // Validar formato HH:MM antes de comparar
+        // Valida se o horário pertence aos disponíveis para o dia da semana
         if (!preg_match('/^\d{2}:\d{2}$/', $dados['hora'])) {
             $erros[] = 'Formato de horário inválido.';
-        } else {
-            $tHora      = strtotime('1970-01-01 ' . $dados['hora'] . ':00');
-            $tAbertura  = strtotime('1970-01-01 ' . HORARIO_ABERTURA  . ':00');
-            $tFechamento = strtotime('1970-01-01 ' . HORARIO_FECHAMENTO . ':00');
-            if ($tHora === false || $tHora < $tAbertura || $tHora > $tFechamento) {
-                $erros[] = 'Horário fora do expediente (' . HORARIO_ABERTURA . ' às ' . HORARIO_FECHAMENTO . ').';
+        } elseif (!empty($dados['data'])) {
+            $dow = (int) date('w', strtotime($dados['data'])); // 0=Dom, 6=Sáb
+            $horariosDia = HORARIOS_POR_DIA[$dow] ?? [];
+            if (empty($horariosDia)) {
+                $erros[] = 'A academia não funciona neste dia.';
+            } elseif (!in_array($dados['hora'], $horariosDia, true)) {
+                $erros[] = 'Horário indisponível para o dia selecionado.';
             }
         }
     }
