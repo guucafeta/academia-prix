@@ -69,6 +69,13 @@ require_once __DIR__ . '/../includes/header.php';
                 </a>
             </div>
             <div class="col-md-3">
+                <a href="<?= admin_route('horarios.php') ?>" class="card-prix p-4 d-block text-center text-decoration-none" id="adminLinkHorarios">
+                    <i class="bi bi-clock-history" style="font-size:2rem;color:#6f42c1;"></i>
+                    <h5 class="mt-2" style="color:var(--prix-white);">Horários de Funcionamento</h5>
+                    <p style="color:var(--prix-muted);font-size:.85rem;">Gerenciar horários disponíveis por dia da semana.</p>
+                </a>
+            </div>
+            <div class="col-md-3">
                 <a href="<?= $base ?>/index.php" class="card-prix p-4 d-block text-center text-decoration-none" id="adminLinkSite">
                     <i class="bi bi-house-fill" style="font-size:2rem;color:#198754;"></i>
                     <h5 class="mt-2" style="color:var(--prix-white);">Ver Site</h5>

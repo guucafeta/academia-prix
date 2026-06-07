@@ -198,6 +198,27 @@ function getModalidades(): array {
 // ── Agendamentos ────────────────────────────────────────────
 
 /**
+ * Busca os horários ativos do banco por dia da semana.
+ * Retorna array indexado por dia (0=Dom...6=Sab) com lista de strings 'HH:MM'.
+ */
+function getHorariosPorDia(): array {
+    static $cache = null;
+    if ($cache !== null) return $cache;
+    try {
+        $pdo  = getConnection();
+        $stmt = $pdo->query("SELECT dia_semana, hora FROM horarios_funcionamento WHERE ativo = 1 ORDER BY dia_semana, hora");
+        $rows = $stmt->fetchAll();
+        $cache = [];
+        foreach ($rows as $row) {
+            $cache[(int)$row['dia_semana']][] = substr($row['hora'], 0, 5);
+        }
+    } catch (Exception $e) {
+        $cache = defined('HORARIOS_POR_DIA') ? HORARIOS_POR_DIA : [];
+    }
+    return $cache;
+}
+
+/**
  * Valida os dados de um agendamento antes de inserir.
  */
 function validarAgendamento(array $dados): array {
@@ -217,12 +238,11 @@ function validarAgendamento(array $dados): array {
     if (empty($dados['hora'])) {
         $erros[] = 'O horário é obrigatório.';
     } else {
-        // Valida se o horário pertence aos disponíveis para o dia da semana
         if (!preg_match('/^\d{2}:\d{2}$/', $dados['hora'])) {
             $erros[] = 'Formato de horário inválido.';
         } elseif (!empty($dados['data'])) {
-            $dow = (int) date('w', strtotime($dados['data'])); // 0=Dom, 6=Sáb
-            $horariosDia = HORARIOS_POR_DIA[$dow] ?? [];
+            $dow         = (int) date('w', strtotime($dados['data']));
+            $horariosDia = getHorariosPorDia()[$dow] ?? [];
             if (empty($horariosDia)) {
                 $erros[] = 'A academia não funciona neste dia.';
             } elseif (!in_array($dados['hora'], $horariosDia, true)) {

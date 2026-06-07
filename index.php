@@ -147,7 +147,7 @@ require_once __DIR__ . '/includes/header.php';
                         </h5>
                         <?php
                         // Injeta os horários por dia para o JS
-                        $horariosPorDia = HORARIOS_POR_DIA;
+                        $horariosPorDia = getHorariosPorDia();
                         ?>
                         <script>
                         const HORARIOS_POR_DIA = <?= json_encode($horariosPorDia, JSON_UNESCAPED_UNICODE) ?>;
