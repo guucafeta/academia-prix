@@ -4,14 +4,15 @@
 // Configurações Centralizadas da Aplicação
 // ============================================================
 
-// Detectar se está rodando em XAMPP/localhost
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host     = $_SERVER['HTTP_HOST'];
-
-// BASE_URL será usada em TODAS as URLs absolutas
-// Se o projeto está em: http://localhost/projetoacademia_final/
-// BASE_URL = http://localhost/projetoacademia_final
-define('BASE_URL', "{$protocol}://{$host}");
+// BASE_URL: usa APP_URL do .env se definido, senão detecta automaticamente
+$_app_url = getenv('APP_URL') ?: '';
+if (!empty($_app_url)) {
+    define('BASE_URL', rtrim($_app_url, '/'));
+} else {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host     = $_SERVER['HTTP_HOST'];
+    define('BASE_URL', "{$protocol}://{$host}");
+}
 
 // Caminhos de diretórios (para includes)
 define('ROOT_DIR',     __DIR__ . '/..');
