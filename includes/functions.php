@@ -238,7 +238,7 @@ function validarAgendamento(array $dados): array {
     if (empty($dados['hora'])) {
         $erros[] = 'O horário é obrigatório.';
     } else {
-        if (!preg_match('/^\d{2}:\d{2}$/', $dados['hora'])) {
+        if (!preg_match('/^\\d{2}:\\d{2}$/', $dados['hora'])) {
             $erros[] = 'Formato de horário inválido.';
         } elseif (!empty($dados['data'])) {
             $dow         = (int) date('w', strtotime($dados['data']));
@@ -355,6 +355,7 @@ function sanitizar(string $valor): string {
 
 /**
  * Busca o plano atual de um aluno.
+ * CORRIGIDO: Removido "AND p.duracao_meses > 0" para aceitar planos avulsos/personal
  */
 function getPlanoAluno($aluno_id) {
     try {
@@ -365,7 +366,6 @@ function getPlanoAluno($aluno_id) {
             INNER JOIN aluno_plano ap ON ap.plano_id = p.id
             WHERE ap.aluno_id = :aluno_id
               AND ap.status = 'ativo'
-              AND p.duracao_meses > 0
             ORDER BY ap.id DESC
             LIMIT 1
         ");
@@ -380,14 +380,18 @@ function getPlanoAluno($aluno_id) {
 
 /**
  * Muda o plano de um aluno.
+ * CORRIGIDO: 
+ *   1. Removido "AND duracao_meses > 0" da validação do plano
+ *   2. Corrigido cálculo da data_fim para planos avulsos (duracao_meses = 0)
  */
 function mudarPlanoAluno($aluno_id, $plano_id) {
     try {
         $pdo = getConnection();
 
         // Validar se o plano existe e é válido
+        // CORRIGIDO: Removido "AND duracao_meses > 0"
         $stmt_validar = $pdo->prepare("
-            SELECT id, duracao_meses FROM planos WHERE id = :plano_id AND ativo = 1 AND duracao_meses > 0
+            SELECT id, duracao_meses FROM planos WHERE id = :plano_id AND ativo = 1
         ");
         $stmt_validar->execute([':plano_id' => $plano_id]);
         $plano = $stmt_validar->fetch(PDO::FETCH_ASSOC);
@@ -404,8 +408,12 @@ function mudarPlanoAluno($aluno_id, $plano_id) {
         $stmt_exp->execute([':aluno_id' => $aluno_id]);
 
         // Calcular datas com base na duração do plano
+        // CORRIGIDO: Planos avulsos (duracao_meses = 0) agora valem 30 dias
         $data_inicio = date('Y-m-d');
-        $data_fim = date('Y-m-d', strtotime("+{$plano['duracao_meses']} months"));
+        $meses = (int)$plano['duracao_meses'];
+        $data_fim = $meses > 0
+            ? date('Y-m-d', strtotime("+{$meses} months"))
+            : date('Y-m-d', strtotime('+30 days'));
 
         // Inserir novo plano ativo
         $stmt_insert = $pdo->prepare("

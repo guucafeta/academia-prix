@@ -48,9 +48,10 @@ if ($plano_id <= 0) {
 $aluno_id = (int)$_SESSION['aluno_id'];
 
 // Buscar dados do plano para confirmar que existe e está ativo
+// CORRIGIDO: Removido "AND duracao_meses > 0" para aceitar planos avulsos/personal
 try {
     $pdo  = getConnection();
-    $stmt = $pdo->prepare("SELECT id, nome, preco, duracao_meses FROM planos WHERE id = :id AND ativo = 1 AND duracao_meses > 0");
+    $stmt = $pdo->prepare("SELECT id, nome, preco, duracao_meses FROM planos WHERE id = :id AND ativo = 1");
     $stmt->execute([':id' => $plano_id]);
     $plano = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (Exception $e) {

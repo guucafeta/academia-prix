@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar'])) {
             ':senha'    => $hash,
             ':telefone' => $telefone,
         ])) {
-            header('Location: ' . BASE_URL . 'aluno/login.php?cadastro=1');
+            header('Location: ' . BASE_URL . '/aluno/login.php?cadastro=1');
             exit;
         } else {
             $msg_err[] = 'Erro ao cadastrar. Tente novamente.';
