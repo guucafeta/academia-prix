@@ -1,9 +1,7 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
+// Sessão já iniciada pelo config.php
 $titulo_pagina  = 'Planos';
 $meta_descricao = 'Conheça os planos da Academia Prix Matriz em Campo Mourão.';
 $planos = getPlanos();

@@ -1,10 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Sessão já iniciada pelo config.php
 
 // Se já está logado como admin, vai direto pro painel
 if (!empty($_SESSION['is_admin']) && !empty($_SESSION['aluno_id'])) {

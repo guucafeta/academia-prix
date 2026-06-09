@@ -1,9 +1,18 @@
 <?php
+// ============================================================
+// aluno/cadastro.php — Página de Cadastro de Novo Aluno
+//
+// RESPONSABILIDADE DESTE ARQUIVO:
+//   Exibe o formulário de criação de conta e processa o POST.
+//   Fluxo: exibe formulário → aluno preenche → POST → valida →
+//          salva no banco → redireciona para o login.
+// ============================================================
+
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
-if (session_status() === PHP_SESSION_NONE) session_start();
+// Sessão já iniciada pelo config.php
 
-// Se já está logado, manda para a área
+// Se o aluno já está logado (e não é admin), não precisa se cadastrar de novo
 if (!empty($_SESSION['aluno_id']) && empty($_SESSION['is_admin'])) {
     header('Location: ' . BASE_URL . '/aluno.php');
     exit;
@@ -11,34 +20,54 @@ if (!empty($_SESSION['aluno_id']) && empty($_SESSION['is_admin'])) {
 
 $titulo_pagina  = 'Cadastro — Área do Aluno';
 $meta_descricao = 'Crie sua conta na Academia Prix e acesse sua área exclusiva.';
-$msg_err = [];
+$msg_err = []; // Array de erros de validação
 
+// ── Processar o formulário de cadastro ────────────────────────
+// Só executa quando o formulário for enviado via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar'])) {
+
+    // Lê os campos do formulário, removendo espaços extras com trim()
     $nome      = trim($_POST['nome']      ?? '');
     $email     = trim($_POST['email']     ?? '');
     $telefone  = trim($_POST['telefone']  ?? '');
     $senha     = $_POST['senha']          ?? '';
     $confirma  = $_POST['confirma_senha'] ?? '';
 
-    // Validações
-    if (strlen($nome) < 3)               $msg_err[] = 'Nome deve ter pelo menos 3 caracteres.';
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $msg_err[] = 'E-mail inválido.';
-    if (strlen($senha) < 6)              $msg_err[] = 'Senha deve ter pelo menos 6 caracteres.';
-    if ($senha !== $confirma)            $msg_err[] = 'As senhas não conferem.';
+    // ── Validações de entrada ─────────────────────────────────
+    if (strlen($nome) < 3)
+        $msg_err[] = 'Nome deve ter pelo menos 3 caracteres.';
 
+    // filter_var com FILTER_VALIDATE_EMAIL verifica formato válido de e-mail
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        $msg_err[] = 'E-mail inválido.';
+
+    if (strlen($senha) < 6)
+        $msg_err[] = 'Senha deve ter pelo menos 6 caracteres.';
+
+    // Compara a senha digitada com a confirmação
+    if ($senha !== $confirma)
+        $msg_err[] = 'As senhas não conferem.';
+
+    // ── Verificar e-mail duplicado ────────────────────────────
+    // Só consulta o banco se não houver erros anteriores (evita queries desnecessárias)
     if (empty($msg_err)) {
         $pdo = getConnection();
 
-        // Checar e-mail duplicado
+        // Prepared statement: o :email é substituído de forma segura pelo PDO
         $stmt = $pdo->prepare("SELECT id FROM alunos WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
         if ($stmt->fetchColumn()) {
-            $msg_err[] = 'email_duplicado';
+            $msg_err[] = 'email_duplicado'; // Código especial para exibir link de login
         }
     }
 
+    // ── Inserir no banco de dados ─────────────────────────────
     if (empty($msg_err)) {
+        // password_hash() com PASSWORD_DEFAULT (bcrypt) cria um hash seguro da senha.
+        // NUNCA armazenamos a senha em texto puro. O hash é irreversível —
+        // para verificar, usa-se password_verify() no login.
         $hash = password_hash($senha, PASSWORD_DEFAULT);
+
         $stmt = $pdo->prepare("
             INSERT INTO alunos (nome, email, senha, telefone, ativo)
             VALUES (:nome, :email, :senha, :telefone, 1)
@@ -49,6 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar'])) {
             ':senha'    => $hash,
             ':telefone' => $telefone,
         ])) {
+            // Cadastro bem-sucedido: redireciona para o login com parâmetro ?cadastro=1
+            // para exibir mensagem de confirmação
             header('Location: ' . BASE_URL . '/aluno/login.php?cadastro=1');
             exit;
         } else {
@@ -57,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar'])) {
     }
 }
 
+// Inclui o cabeçalho HTML (menu, meta tags, CSS)
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -75,13 +107,16 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="agendamento-box">
 
                     <?php if (!empty($msg_err)): ?>
+                        <!-- Exibe cada erro de validação como um item da lista -->
                         <div class="alert-prix-error mb-4">
                             <?php foreach ($msg_err as $e): ?>
                                 <?php if ($e === 'email_duplicado'): ?>
+                                    <!-- Tratamento especial para e-mail já cadastrado: exibe link para login -->
                                     <div><i class="bi bi-exclamation-triangle me-1"></i>Este e-mail já está cadastrado.
-                                        <a href = "<?= BASE_URL ?>/aluno/login.php" style="color:var(--prix-orange);">Faça login.</a>
+                                        <a href="<?= BASE_URL ?>/aluno/login.php" style="color:var(--prix-orange);">Faça login.</a>
                                     </div>
                                 <?php else: ?>
+                                    <!-- sanitizar() evita XSS ao exibir a mensagem de erro -->
                                     <div><i class="bi bi-exclamation-triangle me-1"></i><?= sanitizar($e) ?></div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
@@ -90,9 +125,11 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <h3 class="section-title mb-4">CADASTRO</h3>
 
+                    <!-- Formulário de cadastro: action vazia = envia para a própria página -->
                     <form method="POST" class="form-prix">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome Completo</label>
+                            <!-- value mantém o campo preenchido após erro (UX: não perde o que digitou) -->
                             <input type="text" name="nome" id="nome" class="form-control"
                                 placeholder="Seu nome completo"
                                 value="<?= sanitizar($_POST['nome'] ?? '') ?>" required>
@@ -111,9 +148,11 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
                         <div class="mb-3">
                             <label for="senha" class="form-label">Senha</label>
+                            <!-- input-group combina o campo de senha com o botão de mostrar/ocultar -->
                             <div class="input-group">
                                 <input type="password" name="senha" id="senha" class="form-control"
                                     placeholder="Mínimo 6 caracteres" required>
+                                <!-- Botão que alterna entre mostrar e ocultar a senha via JavaScript -->
                                 <button type="button" class="btn btn-outline-secondary" id="btnVerSenha"
                                     style="border-color:rgba(255,107,33,.3);color:var(--prix-muted);">
                                     <i class="bi bi-eye" id="iconeSenha"></i>
@@ -125,6 +164,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <input type="password" name="confirma_senha" id="confirma_senha" class="form-control"
                                 placeholder="Repita a senha" required>
                         </div>
+                        <!-- name="cadastrar" é verificado no PHP: isset($_POST['cadastrar']) -->
                         <button type="submit" name="cadastrar" class="btn btn-prix w-100">
                             <i class="bi bi-person-plus me-2"></i>Criar Conta
                         </button>
@@ -134,7 +174,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <p class="text-center" style="color:var(--prix-muted);font-size:.9rem;margin:0;">
                         Já tem conta?
-                        <a href = "<?= BASE_URL ?>/aluno/login.php" style="color:var(--prix-orange);font-weight:600;">
+                        <a href="<?= BASE_URL ?>/aluno/login.php" style="color:var(--prix-orange);font-weight:600;">
                             Fazer login
                         </a>
                     </p>
@@ -145,6 +185,9 @@ require_once __DIR__ . '/../includes/header.php';
 </section>
 
 <script>
+// ── Toggle mostrar/ocultar senha ──────────────────────────────
+// Alterna o type do input entre "password" (oculto) e "text" (visível),
+// e troca o ícone do botão para dar feedback visual ao usuário.
 document.getElementById('btnVerSenha').addEventListener('click', function () {
     const input  = document.getElementById('senha');
     const icone  = document.getElementById('iconeSenha');

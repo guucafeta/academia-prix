@@ -9,10 +9,18 @@ $adminNome = getCurrentAlunoNome() ?: 'Administrador';
 $professores = getProfessores();
 $planos      = getPlanos();
 $pdo  = getConnection();
-$stmt = $pdo->query("SELECT ag.*, a.nome AS aluno_nome, p.nome AS professor_nome FROM agendamentos ag JOIN alunos a ON ag.aluno_id = a.id JOIN professores p ON ag.professor_id = p.id ORDER BY ag.criado_em DESC LIMIT 10");
+
+$stmt = $pdo->prepare("SELECT ag.*, a.nome AS aluno_nome, p.nome AS professor_nome FROM agendamentos ag JOIN alunos a ON ag.aluno_id = a.id JOIN professores p ON ag.professor_id = p.id ORDER BY ag.criado_em DESC LIMIT 10");
+$stmt->execute();
 $agendamentos_recentes = $stmt->fetchAll();
-$total_alunos = $pdo->query("SELECT COUNT(*) FROM alunos")->fetchColumn();
-$total_agen   = $pdo->query("SELECT COUNT(*) FROM agendamentos")->fetchColumn();
+
+$stmt_alunos = $pdo->prepare("SELECT COUNT(*) FROM alunos");
+$stmt_alunos->execute();
+$total_alunos = $stmt_alunos->fetchColumn();
+
+$stmt_agen = $pdo->prepare("SELECT COUNT(*) FROM agendamentos");
+$stmt_agen->execute();
+$total_agen = $stmt_agen->fetchColumn();
 require_once __DIR__ . '/../includes/header.php';
 ?>
 

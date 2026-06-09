@@ -1,10 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Sessão já iniciada pelo config.php
 
 if (empty($_SESSION['aluno_id'])) {
     header('Location: ' . BASE_URL . '/aluno/login.php');
