@@ -13,20 +13,11 @@
 //     3. functions.php  ← funções que usam as constantes acima
 // ============================================================
 
-// ── Detectar a URL base do site ───────────────────────────────
-// Lê APP_URL do .env (definido pelo admin ao fazer o deploy).
-// Se não estiver configurado, detecta automaticamente pelo protocolo e host.
-// Exemplo de resultado: "https://academia-prix.com.br" ou "http://localhost"
-$_app_url = getenv('APP_URL') ?: '';
-if (!empty($_app_url)) {
-    // Usa a URL definida manualmente no .env (recomendado em produção)
-    define('BASE_URL', rtrim($_app_url, '/'));
-} else {
     // Detecta automaticamente: "https" se o servidor usa SSL, "http" caso contrário
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host     = $_SERVER['HTTP_HOST']; // ex: "localhost" ou "meusite.com"
-    define('BASE_URL', "{$protocol}://{$host}");
-}
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host     = $_SERVER['HTTP_HOST']; // ex: "localhost" ou "meusite.com"
+define('BASE_URL', "{$protocol}://{$host}/projetoacademia");
+
 
 // ── Constantes de caminhos de diretório (no servidor) ─────────
 // Usadas para require_once e include — caminhos absolutos no sistema de arquivos.
