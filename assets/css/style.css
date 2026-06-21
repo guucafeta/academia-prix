@@ -520,7 +520,7 @@ img { max-width: 100%; height: auto; }
   .section-prix { padding: 40px 0; }
 
   .hero-section { min-height: 85vh; padding-top: 80px; }
-  .hero-video-bg { display: none; }
+  /*.hero-video-bg { display: none; } */
   .hero-sub { font-size: .95rem; margin: 14px 0 22px; }
   .hero-stats { gap: 16px; margin-top: 28px; }
   .hero-stat-num { font-size: 2rem; }
